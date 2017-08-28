@@ -1,0 +1,7 @@
+# https://github.com/commercialhaskell/stack/blob/release/doc/yaml_configuration.md
+templates:
+  params:
+    author-email: danburton.email@gmail.com
+    author-name: Dan Burton
+    copyright: (c) 2017 Dan Burton
+    github-username: DanBurton
