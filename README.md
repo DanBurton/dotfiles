@@ -34,3 +34,11 @@ git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
 ln -s ~/github.com/danburton/dotfiles/spacemacs ~/.spacemacs
 ```
 
+Fixing "xcrun: error: invalid active developer path ..." on mac
+```bash
+xcode-select --install
+```
+(See https://apple.stackexchange.com/questions/254380/macos-sierra-invalid-active-developer-path)
+
+iterm2 new tab same dir
+http://nateeagle.com/2013/03/08/open-new-tabs-in-iterm-in-the-current-directory/
