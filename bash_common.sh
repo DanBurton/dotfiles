@@ -35,6 +35,12 @@ export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
 
 # Bash completions
 eval "$(stack --bash-completion-script "$which stack")"
+
+# https://apple.stackexchange.com/questions/168157/tab-completion-for-hosts-defined-in-ssh-config-doesnt-work-anymore-on-yosemi
+# May need to run the following:
+# brew install bash-completion
+# brew tap homebrew/completions
+# brew install git # to get the git completions, use git from brew
 if [ -f `brew --prefix`/etc/bash_completion ]; then
     . `brew --prefix`/etc/bash_completion
 fi
@@ -42,7 +48,7 @@ fi
 alias reload='source $HOME/.bash_profile'
 alias ls='ls -GF'
 
-alias scheck='stack update && stack --resolver ghc-8.2.1 exec stackage-curator check'
+alias scheck='stack update && stack --resolver ghc-8.2.2 exec stackage-curator check'
 
 uuidlower() {
     ID="$(uuidgen | tr '[:upper:]' '[:lower:]')"
@@ -55,7 +61,7 @@ docker-recompose() {
 }
 
 # Requires $GITHUB_USER
-gclone() {  
+gclone() {
   LOC=$(basename $(pwd))
   git clone git@github.com:$LOC/$1.git
   cd $1
