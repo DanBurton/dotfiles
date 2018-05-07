@@ -51,7 +51,7 @@ if [ $(command -v brew 2> /dev/null) ]; then
     fi
 fi
 
-alias reload='source $HOME/.bash_profile'
+alias reload='source $HOME/github.com/danburton/dotfiles/bash_common.sh'
 alias ls='ls -GF'
 
 # alias scheck='stack update && stack --resolver ghc-8.2.2 exec stackage-curator check'
