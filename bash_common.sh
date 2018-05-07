@@ -14,6 +14,7 @@ BLUE='\[\e[0;34m\]'
 PURPLE='\[\e[0;35m\]'
 CYAN='\[\e[0;36m\]'
 GRAY='\[\e[0;37m\]'
+DARKGRAY='\[\e[1;30m\]'
 
 # Black       0;30     Dark Gray     1;30
 # Blue        0;34     Light Blue    1;34
@@ -27,7 +28,8 @@ GRAY='\[\e[0;37m\]'
 
 GITBRANCH='git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "not a git repository"'
 GITDIRTY='[[ -n "$(git status -s 2> /dev/null)" ]] && echo "*"'
-export PS1="\n${CYAN}\w${PURPLE} [\$($GITBRANCH)\$($GITDIRTY)]\n${YELLOW}========================= ${GRAY}[\t] ${GREEN}\u ${YELLOW}=========================${DEFAULT}\n\$ "
+TIMEZONE='date +"%z"'
+export PS1="\n${CYAN}\w${PURPLE} [\$($GITBRANCH)\$($GITDIRTY)]\n${YELLOW}============== ${GRAY}[\t${DARKGRAY}\$($TIMEZONE)${GRAY}] ${GREEN}\u${GRAY}@${CYAN}\h ${DARKGRAY}\s ${YELLOW}==============${DEFAULT}\n\$ "
 
 # colorized terminal output
 export CLICOLOR=1
@@ -41,14 +43,83 @@ eval "$(stack --bash-completion-script "$which stack")"
 # brew install bash-completion
 # brew tap homebrew/completions
 # brew install git # to get the git completions, use git from brew
-if [ -f `brew --prefix`/etc/bash_completion ]; then
-    . `brew --prefix`/etc/bash_completion
+if [ -x $(command -v brew) ]; then
+    if [ -f `brew --prefix`/etc/bash_completion ]; then
+        . `brew --prefix`/etc/bash_completion
+    fi
 fi
 
 alias reload='source $HOME/.bash_profile'
 alias ls='ls -GF'
 
-alias scheck='stack update && stack --resolver ghc-8.2.2 exec stackage-curator check'
+# alias scheck='stack update && stack --resolver ghc-8.2.2 exec stackage-curator check'
+alias scheck='stack update && ./check 2> scheck.txt'
+
+sunpack() {
+    PKG=$1
+    cd ~/scratch
+    stack unpack $1
+    cd $1*
+}
+
+alias sinit='stack init --force --resolver nightly'
+alias snightly='echo "resolver: nightly-$(date -u +%F)" > stack.yaml'
+alias stest='stack build --haddock --test --bench --no-run-benchmarks'
+
+spr() {
+    sunpack $1
+    snightly
+    stest
+}
+
+semi() {
+    echo 'Add semigroup instances'
+    echo 'See also: https://ghc.haskell.org/trac/ghc/wiki/Migration/8.4#SemigroupMonoidsuperclasses'
+}
+
+stitle() {
+    PKG=$(basename $(pwd))
+    echo "$PKG build failure with GHC 8.4"
+    echo "$PKG build failure with GHC 8.4" | pbcopy
+}
+
+issue() {
+    semi
+    echo
+    echo '```'
+    echo '```'
+    echo
+    repro
+}
+
+repro() {
+    PKG=$(basename $(pwd))
+    STACK_YAML_LINES=$(wc -l stack.yaml | awk '{print $1}')
+
+    echo 'I was able to reproduce this locally like so:'
+    echo
+    echo '```bash'
+    echo "stack unpack $PKG && cd $PKG"
+    if test $STACK_YAML_LINES -eq 1; then
+        echo "echo '$(cat stack.yaml)' > stack.yaml"
+    else
+        echo 'edit stack.yaml # add the following stack.yaml'
+    fi
+    echo 'stack build --haddock --test --bench --no-run-benchmarks'
+    echo '```'
+
+    if test $STACK_YAML_LINES -eq 1; then
+        : # don't print the stack.yaml
+    else
+        echo
+        echo '```yaml'
+        echo '# stack.yaml'
+        cat stack.yaml
+        echo
+        echo '```'
+    fi
+
+}
 
 uuidlower() {
     ID="$(uuidgen | tr '[:upper:]' '[:lower:]')"
