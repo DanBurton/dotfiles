@@ -29,21 +29,23 @@ DARKGRAY='\[\e[1;30m\]'
 GITBRANCH='git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "not a git repository"'
 GITDIRTY='[[ -n "$(git status -s 2> /dev/null)" ]] && echo "*"'
 TIMEZONE='date +"%z"'
-export PS1="\n${CYAN}\w${PURPLE} [\$($GITBRANCH)\$($GITDIRTY)]\n${YELLOW}============== ${GRAY}[\t${DARKGRAY}\$($TIMEZONE)${GRAY}] ${GREEN}\u${GRAY}@${CYAN}\h ${DARKGRAY}\s ${YELLOW}==============${DEFAULT}\n\$ "
+export PS1="\n${CYAN}\w${PURPLE} [\$($GITBRANCH)\$($GITDIRTY)]\n${YELLOW}================ ${GRAY}[\t${DARKGRAY}\$($TIMEZONE)${GRAY}] ${GREEN}\u${GRAY}@${CYAN}\h ${DARKGRAY}\s ${YELLOW}================${DEFAULT}\n\$ "
 
 # colorized terminal output
 export CLICOLOR=1
 export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
 
 # Bash completions
-eval "$(stack --bash-completion-script "$which stack")"
+if [ $(command -v stack 2> /dev/null) ]; then
+    eval "$(stack --bash-completion-script "$which stack")"
+fi
 
 # https://apple.stackexchange.com/questions/168157/tab-completion-for-hosts-defined-in-ssh-config-doesnt-work-anymore-on-yosemi
 # May need to run the following:
 # brew install bash-completion
 # brew tap homebrew/completions
-# brew install git # to get the git completions, use git from brew
-if [ -x $(command -v brew) ]; then
+# brew install git # to get the git completions on mac, use git from brew
+if [ $(command -v brew 2> /dev/null) ]; then
     if [ -f `brew --prefix`/etc/bash_completion ]; then
         . `brew --prefix`/etc/bash_completion
     fi
