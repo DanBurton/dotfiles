@@ -66,7 +66,7 @@ sunpack() {
 
 alias sinit='stack init --force --resolver nightly'
 alias snightly='echo "resolver: nightly-$(date -u +%F)" > stack.yaml'
-alias stest='stack build --haddock --test --bench --no-run-benchmarks'
+alias stest='stack build --test --bench --no-run-benchmarks'
 
 spr() {
     sunpack $1
@@ -107,7 +107,7 @@ repro() {
     else
         echo 'edit stack.yaml # add the following stack.yaml'
     fi
-    echo 'stack build --haddock --test --bench --no-run-benchmarks'
+    echo 'stack build --test --bench --no-run-benchmarks'
     echo '```'
 
     if test $STACK_YAML_LINES -eq 1; then
