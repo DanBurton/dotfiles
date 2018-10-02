@@ -3,8 +3,6 @@ export PATH=/usr/local/sbin:$PATH
 export PATH=$HOME/.local/bin:$PATH
 
 if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then . $HOME/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
-# modified by Dan to use $HOME
-# if [ -e /Users/danburton/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/danburton/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
 
 ## bash prompt
 DEFAULT='\[\e[m\]'
@@ -52,7 +50,7 @@ if [ $(command -v brew 2> /dev/null) ]; then
 fi
 
 alias typeless='history | tail -n 20000 | sed "s/.*  //" | sort | uniq -c | sort -g | tail -n 100'
-alias reload='source $HOME/github.com/danburton/dotfiles/bash_common.sh'
+alias reload='source $HOME/github.com/$GITHUB_USER/dotfiles/bash_common.sh'
 alias ls='ls -GF'
 
 # alias scheck='stack update && stack --resolver ghc-8.2.2 exec stackage-curator check'
@@ -67,7 +65,7 @@ sunpack() {
 
 alias sinit='stack init --force --resolver nightly'
 alias snightly='echo "resolver: nightly-$(date -u +%F)" > stack.yaml'
-alias stest='stack build --test --bench --no-run-benchmarks'
+alias stest='stack build --test --bench --no-run-benchmarks --fast'
 
 spr() {
     sunpack $1
@@ -121,7 +119,6 @@ repro() {
         echo
         echo '```'
     fi
-
 }
 
 uuidlower() {
