@@ -51,6 +51,7 @@ if [ $(command -v brew 2> /dev/null) ]; then
     fi
 fi
 
+alias typeless='history | tail -n 20000 | sed "s/.*  //" | sort | uniq -c | sort -g | tail -n 100'
 alias reload='source $HOME/github.com/danburton/dotfiles/bash_common.sh'
 alias ls='ls -GF'
 
@@ -139,4 +140,11 @@ gclone() {
   git clone git@github.com:$LOC/$1.git
   cd $1
   git remote add forked-origin git@github.com:$GITHUB_USER/$1.git
+}
+
+# Requires $BITBUCKET_USER
+bclone() {
+  LOC=$(basename $(pwd))
+  git clone git@bitbucket.org:TVision-Insights/$1.git
+  cd $1
 }
