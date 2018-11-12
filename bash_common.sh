@@ -54,7 +54,8 @@ alias reload='source $HOME/github.com/$GITHUB_USER/dotfiles/bash_common.sh'
 alias ls='ls -GF'
 
 # alias scheck='stack update && stack --resolver ghc-8.2.2 exec stackage-curator check'
-alias scheck='stack update && ./check 2> scheck.txt'
+# alias scheck-old='stack update && ./check 2> scheck.txt'
+alias scheck='stack update && ./check 2> >(tee scheck.txt >&2)'
 
 sunpack() {
     PKG=$1
@@ -106,7 +107,7 @@ repro() {
     else
         echo 'edit stack.yaml # add the following stack.yaml'
     fi
-    echo 'stack build --test --bench --no-run-benchmarks'
+    echo 'stack build --test --bench --no-run-benchmarks --fast'
     echo '```'
 
     if test $STACK_YAML_LINES -eq 1; then
@@ -141,7 +142,30 @@ gclone() {
 
 # Requires $BITBUCKET_USER
 bclone() {
-  LOC=$(basename $(pwd))
+  # LOC=$(basename $(pwd))
+  cd $HOME/bitbucket.org/TVision-Insights/
   git clone git@bitbucket.org:TVision-Insights/$1.git
   cd $1
+}
+
+# https://medium.com/@bobbypriambodo/blazingly-fast-spacemacs-with-persistent-server-92260f2118b7
+em() {
+    # Checks if there's a frame open
+    emacsclient -n -e "(if (> (length (frame-list)) 1) 't)" 2> /dev/null | grep t &> /dev/null
+    if [ "$?" -eq "1" ]; then
+        emacsclient -a '' -nqc "$@" &> /dev/null
+    else
+        emacsclient -nq "$@" &> /dev/null
+    fi
+}
+
+export S3_LOCAL_DIR="$HOME/s3/"
+# requires aws
+s3-get() {
+    FILE=$1
+    FILE_DIR="$(dirname $FILE)"
+    LOCAL_FILE="$S3_LOCAL_DIR/$FILE"
+    mkdir -p $S3_LOCAL_DIR/$FILE_DIR
+    aws s3 cp s3://$FILE $LOCAL_FILE >&2
+    echo $LOCAL_FILE
 }
