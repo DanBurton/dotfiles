@@ -33,7 +33,11 @@ values."
    '(
      clojure
      csv
-     (haskell :variables haskell-process-type 'stack-ghci)
+     (haskell
+      :variables
+      haskell-process-type 'stack-ghci
+      haskell-completion-backend 'intero
+      )
      html
      javascript
      purescript
@@ -49,8 +53,7 @@ values."
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      helm
-     (auto-completion
-      (haskell :varibales haskell-completion-backend 'intero))
+     auto-completion
      ;; better-defaults
      emacs-lisp
      git
@@ -59,7 +62,7 @@ values."
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
-     spell-checking
+     ;; spell-checking
      syntax-checking
      (version-control
       :variables
