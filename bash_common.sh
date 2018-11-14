@@ -1,14 +1,19 @@
+#! /bin/bash
+
 ## path modifications
 export PATH=/usr/local/sbin:$PATH
 export PATH=$HOME/.local/bin:$PATH
 
-if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then . $HOME/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+
+if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+    # shellcheck source=/dev/null
+    . "$HOME/.nix-profile/etc/profile.d/nix.sh";
+fi # added by Nix installer
 
 ## bash prompt
 DEFAULT='\[\e[m\]'
 GREEN='\[\e[0;32m\]'
 YELLOW='\[\e[0;33m\]'
-BLUE='\[\e[0;34m\]'
 PURPLE='\[\e[0;35m\]'
 CYAN='\[\e[0;36m\]'
 GRAY='\[\e[0;37m\]'
@@ -23,19 +28,19 @@ DARKGRAY='\[\e[1;30m\]'
 # Brown       0;33     Yellow        1;33
 # Light Gray  0;37     White         1;37
 
-
 GITBRANCH='git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "not a git repository"'
+# shellcheck disable=SC2016
 GITDIRTY='[[ -n "$(git status -s 2> /dev/null)" ]] && echo "*"'
 TIMEZONE='date +"%z"'
-export PS1="\n${CYAN}\w${PURPLE} [\$($GITBRANCH)\$($GITDIRTY)]\n${YELLOW}================ ${GRAY}[\t${DARKGRAY}\$($TIMEZONE)${GRAY}] ${GREEN}\u${GRAY}@${CYAN}\h ${DARKGRAY}\s ${YELLOW}================${DEFAULT}\n\$ "
+export PS1="\\n${CYAN}\\w${PURPLE} [\$($GITBRANCH)\$($GITDIRTY)]\\n${YELLOW}================ ${GRAY}[\\t${DARKGRAY}\$($TIMEZONE)${GRAY}] ${GREEN}\\u${GRAY}@${CYAN}\\h ${DARKGRAY}\\s ${YELLOW}================${DEFAULT}\\n\$ "
 
 # colorized terminal output
 export CLICOLOR=1
 export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
 
 # Bash completions
-if [ $(command -v stack 2> /dev/null) ]; then
-    eval "$(stack --bash-completion-script "$which stack")"
+if [ "$(command -v stack 2> /dev/null)" ]; then
+    eval "$(stack --bash-completion-script "$(command -v stack)")"
 fi
 
 # https://apple.stackexchange.com/questions/168157/tab-completion-for-hosts-defined-in-ssh-config-doesnt-work-anymore-on-yosemi
@@ -43,9 +48,10 @@ fi
 # brew install bash-completion
 # brew tap homebrew/completions
 # brew install git # to get the git completions on mac, use git from brew
-if [ $(command -v brew 2> /dev/null) ]; then
-    if [ -f `brew --prefix`/etc/bash_completion ]; then
-        . `brew --prefix`/etc/bash_completion
+if [ "$(command -v brew 2> /dev/null)" ]; then
+    if [ -f "$(brew --prefix)/etc/bash_completion" ]; then
+        # shellcheck source=/dev/null
+        . "$(brew --prefix)/etc/bash_completion"
     fi
 fi
 
@@ -57,11 +63,14 @@ alias ls='ls -GF'
 # alias scheck-old='stack update && ./check 2> scheck.txt'
 alias scheck='stack update && ./check 2> >(tee scheck.txt >&2)'
 
+# shellcheck disable=SC2016
+CODE_FENCE='```'
+
 sunpack() {
-    PKG=$1
-    cd ~/scratch
-    stack unpack $1
-    cd $1*
+    PKG="$1"
+    cd ~/scratch || return
+    stack unpack "$PKG"
+    cd "$PKG"* || return
 }
 
 alias sinit='stack init --force --resolver nightly'
@@ -69,7 +78,7 @@ alias snightly='echo "resolver: nightly-$(date -u +%F)" > stack.yaml'
 alias stest='stack build --test --bench --no-run-benchmarks --fast'
 
 spr() {
-    sunpack $1
+    sunpack "$1"
     snightly
     stest
 }
@@ -80,7 +89,7 @@ semi() {
 }
 
 stitle() {
-    PKG=$(basename $(pwd))
+    PKG="$(basename "$(pwd)")"
     echo "$PKG build failure with GHC 8.4"
     echo "$PKG build failure with GHC 8.4" | pbcopy
 }
@@ -88,44 +97,44 @@ stitle() {
 issue() {
     semi
     echo
-    echo '```'
-    echo '```'
+    echo "$CODE_FENCE"
+    echo "$CODE_FENCE"
     echo
     repro
 }
 
 repro() {
-    PKG=$(basename $(pwd))
+    PKG="$(basename "$(pwd)")"
     STACK_YAML_LINES=$(wc -l stack.yaml | awk '{print $1}')
 
     echo 'I was able to reproduce this locally like so:'
     echo
-    echo '```bash'
+    echo "$(CODE_FENCE)bash"
     echo "stack unpack $PKG && cd $PKG"
-    if test $STACK_YAML_LINES -eq 1; then
+    if test "$STACK_YAML_LINES" -eq 1; then
         echo "echo '$(cat stack.yaml)' > stack.yaml"
     else
         echo 'edit stack.yaml # add the following stack.yaml'
     fi
     echo 'stack build --test --bench --no-run-benchmarks --fast'
-    echo '```'
+    echo "$CODE_FENCE"
 
-    if test $STACK_YAML_LINES -eq 1; then
+    if test "$STACK_YAML_LINES" -eq 1; then
         : # don't print the stack.yaml
     else
         echo
-        echo '```yaml'
+        echo "$(CODE_FENCE)yaml"
         echo '# stack.yaml'
         cat stack.yaml
         echo
-        echo '```'
+        echo "$CODE_FENCE"
     fi
 }
 
 uuidlower() {
     ID="$(uuidgen | tr '[:upper:]' '[:lower:]')"
-    echo $ID | tr -d '\n' | pbcopy
-    echo $ID
+    echo "$ID" | tr -d '\n' | pbcopy
+    echo "$ID"
 }
 
 docker-recompose() {
@@ -134,18 +143,18 @@ docker-recompose() {
 
 # Requires $GITHUB_USER
 gclone() {
-  LOC=$(basename $(pwd))
-  git clone git@github.com:$LOC/$1.git
-  cd $1
-  git remote add forked-origin git@github.com:$GITHUB_USER/$1.git
+  LOC="$(basename "$(pwd)")"
+  git clone "git@github.com:$LOC/$1.git"
+  cd "$1" || return
+  git remote add forked-origin "git@github.com:$GITHUB_USER/$1.git"
 }
 
 # Requires $BITBUCKET_USER
 bclone() {
   # LOC=$(basename $(pwd))
-  cd $HOME/bitbucket.org/TVision-Insights/
-  git clone git@bitbucket.org:TVision-Insights/$1.git
-  cd $1
+  cd "$HOME/bitbucket.org/TVision-Insights/" || return
+  git clone "git@bitbucket.org:TVision-Insights/$1.git"
+  cd "$1" || return
 }
 
 # https://medium.com/@bobbypriambodo/blazingly-fast-spacemacs-with-persistent-server-92260f2118b7
@@ -162,10 +171,17 @@ em() {
 export S3_LOCAL_DIR="$HOME/s3/"
 # requires aws
 s3-get() {
-    FILE=$1
-    FILE_DIR="$(dirname $FILE)"
+    FILE="$1"
+    FILE_DIR="$(dirname "$FILE")"
     LOCAL_FILE="$S3_LOCAL_DIR/$FILE"
-    mkdir -p $S3_LOCAL_DIR/$FILE_DIR
-    aws s3 cp s3://$FILE $LOCAL_FILE >&2
-    echo $LOCAL_FILE
+    mkdir -p "$S3_LOCAL_DIR/$FILE_DIR"
+    aws s3 cp "s3://$FILE" "$LOCAL_FILE" >&2
+    echo "$LOCAL_FILE"
+}
+
+# requires shellcheck
+shellcheck-bash-profile () {
+    shellcheck \
+        "$HOME/github.com/$GITHUB_USER/dotfiles/bash_common.sh" \
+        "$HOME/.bash_profile"
 }
