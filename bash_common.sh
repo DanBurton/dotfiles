@@ -109,7 +109,7 @@ repro() {
 
     echo 'I was able to reproduce this locally like so:'
     echo
-    echo "$(CODE_FENCE)bash"
+    echo "$CODE_FENCE"bash
     echo "stack unpack $PKG && cd $PKG"
     if test "$STACK_YAML_LINES" -eq 1; then
         echo "echo '$(cat stack.yaml)' > stack.yaml"
@@ -123,7 +123,7 @@ repro() {
         : # don't print the stack.yaml
     else
         echo
-        echo "$(CODE_FENCE)yaml"
+        echo "$CODE_FENCE"yaml
         echo '# stack.yaml'
         cat stack.yaml
         echo
