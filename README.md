@@ -31,7 +31,19 @@ Spacemacs
 
 ```bash
 git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
+git checkout develop
+git pull
 ln -s ~/github.com/danburton/dotfiles/spacemacs ~/.spacemacs
+```
+
+Problems with emacs 26 and spacemacs develop branch?
+
+https://github.com/syl20bnr/spacemacs/issues/10438#issuecomment-387449474
+
+```bash
+cd ~/.emacs.d/.cache/stable-elpa/26.1
+tar -xzvf spacelpa-0.300.tar.gz
+echo -n "0.300" > version
 ```
 
 Fixing "xcrun: error: invalid active developer path ..." on mac
