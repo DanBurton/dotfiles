@@ -157,6 +157,8 @@ bclone() {
   cd "$1" || return
 }
 
+# NOTE: I don't currently use this. It tends to crash emacs or cause other weird behavior.
+# Which is too bad, because it made opening files in emacs INSANELY fast.
 # https://medium.com/@bobbypriambodo/blazingly-fast-spacemacs-with-persistent-server-92260f2118b7
 em() {
     # Checks if there's a frame open
