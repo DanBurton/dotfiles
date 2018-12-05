@@ -59,8 +59,6 @@ alias typeless='history | tail -n 20000 | sed "s/.*  //" | sort | uniq -c | sort
 alias reload='source $HOME/github.com/$GITHUB_USER/dotfiles/bash_common.sh'
 alias ls='ls -GF'
 
-# alias scheck='stack update && stack --resolver ghc-8.2.2 exec stackage-curator check'
-# alias scheck-old='stack update && ./check 2> scheck.txt'
 alias scheck='stack update && ./check 2> >(tee scheck.txt >&2)'
 
 # shellcheck disable=SC2016
@@ -149,7 +147,7 @@ gclone() {
   git remote add forked-origin "git@github.com:$GITHUB_USER/$1.git"
 }
 
-# Requires $BITBUCKET_USER
+# Hard-coded to TVision-Insights, since that's the only bitbucket I ever clone from.
 bclone() {
   # LOC=$(basename $(pwd))
   cd "$HOME/bitbucket.org/TVision-Insights/" || return
