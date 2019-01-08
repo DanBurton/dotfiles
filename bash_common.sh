@@ -102,37 +102,37 @@ issue() {
 }
 
 repro() {
-    PKG="$(basename "$(pwd)")"
-    STACK_YAML_LINES=$(wc -l stack.yaml | awk '{print $1}')
+  PKG="$(basename "$(pwd)")"
+  STACK_YAML_LINES=$(wc -l stack.yaml | awk '{print $1}')
 
-    echo 'I was able to reproduce this locally like so:'
+  echo 'I was able to reproduce this locally like so:'
+  echo
+  echo "$CODE_FENCE"bash
+  echo "stack unpack $PKG && cd $PKG"
+  if test "$STACK_YAML_LINES" -eq 1; then
+    echo "echo '$(cat stack.yaml)' > stack.yaml"
+  else
+    echo 'edit stack.yaml # add the following stack.yaml'
+  fi
+  echo 'stack build --test --bench --no-run-benchmarks --fast'
+  echo "$CODE_FENCE"
+
+  if test "$STACK_YAML_LINES" -eq 1; then
+    : # don't print the stack.yaml
+  else
     echo
-    echo "$CODE_FENCE"bash
-    echo "stack unpack $PKG && cd $PKG"
-    if test "$STACK_YAML_LINES" -eq 1; then
-        echo "echo '$(cat stack.yaml)' > stack.yaml"
-    else
-        echo 'edit stack.yaml # add the following stack.yaml'
-    fi
-    echo 'stack build --test --bench --no-run-benchmarks --fast'
+    echo "$CODE_FENCE"yaml
+    echo '# stack.yaml'
+    cat stack.yaml
+    echo
     echo "$CODE_FENCE"
-
-    if test "$STACK_YAML_LINES" -eq 1; then
-        : # don't print the stack.yaml
-    else
-        echo
-        echo "$CODE_FENCE"yaml
-        echo '# stack.yaml'
-        cat stack.yaml
-        echo
-        echo "$CODE_FENCE"
-    fi
+  fi
 }
 
 uuidlower() {
-    ID="$(uuidgen | tr '[:upper:]' '[:lower:]')"
-    echo "$ID" | tr -d '\n' | pbcopy
-    echo "$ID"
+  ID="$(uuidgen | tr '[:upper:]' '[:lower:]')"
+  echo "$ID" | tr -d '\n' | pbcopy
+  echo "$ID"
 }
 
 docker-recompose() {
@@ -159,29 +159,38 @@ bclone() {
 # Which is too bad, because it made opening files in emacs INSANELY fast.
 # https://medium.com/@bobbypriambodo/blazingly-fast-spacemacs-with-persistent-server-92260f2118b7
 em() {
-    # Checks if there's a frame open
-    emacsclient -n -e "(if (> (length (frame-list)) 1) 't)" 2> /dev/null | grep t &> /dev/null
-    if [ "$?" -eq "1" ]; then
-        emacsclient -a '' -nqc "$@" &> /dev/null
-    else
-        emacsclient -nq "$@" &> /dev/null
-    fi
+  # Checks if there's a frame open
+  emacsclient -n -e "(if (> (length (frame-list)) 1) 't)" 2> /dev/null | grep t &> /dev/null
+  if [ "$?" -eq "1" ]; then
+    emacsclient -a '' -nqc "$@" &> /dev/null
+  else
+    emacsclient -nq "$@" &> /dev/null
+  fi
 }
 
 export S3_LOCAL_DIR="$HOME/s3/"
 # requires aws
 s3-get() {
-    FILE="$1"
-    FILE_DIR="$(dirname "$FILE")"
-    LOCAL_FILE="$S3_LOCAL_DIR/$FILE"
-    mkdir -p "$S3_LOCAL_DIR/$FILE_DIR"
-    aws s3 cp "s3://$FILE" "$LOCAL_FILE" >&2
-    echo "$LOCAL_FILE"
+  FILE="$1"
+  FILE_DIR="$(dirname "$FILE")"
+  LOCAL_FILE="$S3_LOCAL_DIR/$FILE"
+  mkdir -p "$S3_LOCAL_DIR/$FILE_DIR"
+  aws s3 cp "s3://$FILE" "$LOCAL_FILE" >&2
+  echo "$LOCAL_FILE"
 }
 
 # requires shellcheck
 shellcheck-bash-profile () {
-    shellcheck \
-        "$HOME/github.com/$GITHUB_USER/dotfiles/bash_common.sh" \
-        "$HOME/.bash_profile"
+  shellcheck \
+    "$HOME/github.com/$GITHUB_USER/dotfiles/bash_common.sh" \
+    "$HOME/.bash_profile"
+}
+
+moss-grep () {
+  find \
+    "$HOME/bitbucket.org/TVision-Insights" \
+    "(" -name '*.hs' -or -name 'package.yaml' ")" \
+    -and -not -path "*/.*/*" \
+    -and -not -path "*/third-party/*" \
+    -exec grep -H "$1" {} ';'
 }
