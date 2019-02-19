@@ -5,10 +5,10 @@ export PATH=/usr/local/sbin:$PATH
 export PATH=$HOME/.local/bin:$PATH
 
 
-if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
-    # shellcheck source=/dev/null
-    . "$HOME/.nix-profile/etc/profile.d/nix.sh";
-fi # added by Nix installer
+# if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+#     # shellcheck source=/dev/null
+#     . "$HOME/.nix-profile/etc/profile.d/nix.sh";
+# fi # added by Nix installer
 
 ## bash prompt
 DEFAULT='\[\e[m\]'
