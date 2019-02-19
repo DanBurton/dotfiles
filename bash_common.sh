@@ -32,7 +32,43 @@ GITBRANCH='git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "not a git reposi
 # shellcheck disable=SC2016
 GITDIRTY='[[ -n "$(git status -s 2> /dev/null)" ]] && echo "*"'
 TIMEZONE='date +"%z"'
-export PS1="\\n${CYAN}\\w${PURPLE} [\$($GITBRANCH)\$($GITDIRTY)]\\n${YELLOW}================ ${GRAY}[\\t${DARKGRAY}\$($TIMEZONE)${GRAY}] ${GREEN}\\u${GRAY}@${CYAN}\\h ${DARKGRAY}\\s ${YELLOW}================${DEFAULT}\\n\$ "
+
+get-resolver() {
+  SNAPSHOT="$(grep '^\(snapshot\|resolver\):' stack.yaml 2>/dev/null \
+           || grep '^\(snapshot\|resolver\):' ../stack.yaml 2>/dev/null \
+           || grep '^\(snapshot\|resolver\):' ../../stack.yaml 2>/dev/null \
+           || grep '^\(snapshot\|resolver\):' ../../../stack.yaml 2>/dev/null \
+           || grep '^\(snapshot\|resolver\):' ../../../../stack.yaml 2>/dev/null \
+           || echo "absent")"
+  if [ "$SNAPSHOT" = "absent" ]; then
+    echo ""
+  else
+    echo "  -- $SNAPSHOT"
+  fi
+  # PROJECT_ROOT="$(stack --resolver ghc-8.6.2 path --project-root)"
+  # if [ "$PROJECT_ROOT" = "/Users/dan/.stack/global-project" ]; then
+  #   echo ""
+  # else
+  #   SNAPSHOT="$(cat $PROJECT_ROOT/stack.yaml | grep '^\(snapshot\|resolver\):' | cut -f 2 -d ' ')"
+  #   echo "-- snapshot: $SNAPSHOT"
+  # fi
+}
+
+get-python-version() {
+  PYVER="$(cat .python-version 2>/dev/null \
+        || cat ../.python-version 2>/dev/null \
+        || cat ../../.python-version 2>/dev/null \
+        || cat ../../../.python-version 2>/dev/null \
+        || cat ../../../../.python-version 2>/dev/null \
+        || echo "absent")"
+  if [ "$PYVER" = "absent" ]; then
+    echo ""
+  else
+    echo "  # .python-version: $PYVER"
+  fi
+}
+
+export PS1="\\n${CYAN}\\w${PURPLE}\\n  [\$($GITBRANCH)\$($GITDIRTY)]\$(get-resolver)\$(get-python-version)\\n${YELLOW}================ ${GRAY}[\\t${DARKGRAY}\$($TIMEZONE)${GRAY}] ${GREEN}\\u${GRAY}@${CYAN}\\h ${DARKGRAY}\\s ${YELLOW}================${DEFAULT}\\n\$ "
 
 # colorized terminal output
 export CLICOLOR=1
