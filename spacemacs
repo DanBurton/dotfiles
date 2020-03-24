@@ -40,6 +40,7 @@ This function should only modify configuration layer settings."
      csv
      (haskell
       :variables
+      ;; haskell-process-type 'stack-ghci
       ;; haskell-process-type 'cabal-repl
       haskell-completion-backend 'lsp
       )
@@ -92,7 +93,10 @@ This function should only modify configuration layer settings."
    ;; To use a local version of a package, use the `:location' property:
    ;; '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages
+   '(
+     flycheck-mypy
+     )
 
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -485,7 +489,15 @@ See the header of this file for more information."
   )
 
 (defun dan-python-settings ()
-  (setq fill-column 100))
+  (setq fill-column 101))
+
+(defun apply-linters ()
+  (if (and (buffer-file-name)
+           ;; (string= (file-name-extension (buffer-file-name)) "py")
+           (eq major-mode 'python-mode)
+           (projectile-project-p)
+           (file-executable-p (concat (projectile-project-p) "bin/apply_linters.sh")))
+      (shell-command (concat (projectile-project-p) "bin/apply_linters.sh " (buffer-file-name)))))
 
 (defun dotspacemacs/user-init ()
   "Initialization for user code:
@@ -493,6 +505,12 @@ This function is called immediately after `dotspacemacs/init', before layer
 configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
+
+  (when window-system
+    (set-frame-width (selected-frame) 110)
+    (set-frame-height (selected-frame) 40)
+    (set-frame-position (selected-frame) 0 0))
+
   ;; Ruler at column 100
   ;; https://github.com/syl20bnr/spacemacs/issues/4856#issuecomment-176650964
   (add-hook 'prog-mode-hook 'turn-on-fci-mode)
@@ -510,6 +528,8 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
   ;; (add-to-list 'auto-mode-alist '("\\.lagda$" . agda2-mode))
   ;; (add-hook 'agda2-mode-hook 'agda2-load)
+
+  ;; (add-hook 'after-save-hook 'apply-linters)
 
   ;; https://stackoverflow.com/questions/52521587/emacs-error-failed-to-initialize-color-list-unarchiver-when-i-call-it-in-the-t
   (delete-file "~/Library/Colors/Emacs.clr")
@@ -555,6 +575,14 @@ before packages are loaded."
 
   (add-to-list 'auto-mode-alist '("berksfiles/.*\\.test" . ruby-mode))
   (add-to-list 'auto-mode-alist '("berksfiles/.*\\.production" . ruby-mode))
+
+  ;; python
+  (setq-default dotspacemacs-configuration-layers
+                '((python :variables python-test-runner 'pytest)))
+
+  ;; pip install flake8-mypy
+  (require 'flycheck-mypy)
+  (flycheck-add-next-checker 'python-flake8 'python-mypy t)
 
   (add-to-list 'auto-mode-alist '("\\.rsh$" . javascript-mode))
   (add-to-list 'auto-mode-alist '("\\.scrbl$" . racket-mode))
