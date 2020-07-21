@@ -36,6 +36,13 @@ git pull
 ln -s ~/github.com/danburton/dotfiles/spacemacs ~/.spacemacs
 ```
 
+Haskell support for spacemacs
+
+```
+mkdir -p ~/.local/bin
+cp ~/github.com/danburton/dotfiles/sbin/stack-from-project-root.sh ~/.local/bin/stack-from-project-root.sh
+```
+
 Problems with emacs 26 and spacemacs develop branch?
 
 https://github.com/syl20bnr/spacemacs/issues/10438#issuecomment-387449474
