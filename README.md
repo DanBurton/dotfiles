@@ -38,6 +38,8 @@ ln -s ~/github.com/danburton/dotfiles/spacemacs ~/.spacemacs
 
 Haskell support for spacemacs
 
+https://github.com/haskell/haskell-language-server#installation
+
 ```
 mkdir -p ~/.local/bin
 cp ~/github.com/danburton/dotfiles/sbin/stack-from-project-root.sh ~/.local/bin/stack-from-project-root.sh
