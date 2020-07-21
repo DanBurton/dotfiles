@@ -204,7 +204,7 @@ em() {
   fi
 }
 
-export S3_LOCAL_DIR="$HOME/s3/"
+export S3_LOCAL_DIR="$HOME/s3"
 # requires aws
 s3-get() {
   FILE="$1"
@@ -230,3 +230,5 @@ moss-grep () {
     -and -not -path "*/third-party/*" \
     -exec grep -H "$1" {} ';'
 }
+
+alias whoamip='curl ifconfig.co'
