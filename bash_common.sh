@@ -1,8 +1,9 @@
 #! /bin/bash
 
 ## path modifications
-export PATH=/usr/local/sbin:$PATH
-export PATH=$HOME/.local/bin:$PATH
+export PATH="/usr/local/sbin:$PATH"
+export PATH="$HOME/.cabal/bin:$HOME/.ghcup/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 
 
 # if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
