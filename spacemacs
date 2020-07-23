@@ -510,7 +510,11 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
   ;; (add-to-list 'auto-mode-alist '("\\.lagda$" . agda2-mode))
   ;; (add-hook 'agda2-mode-hook 'agda2-load)
+
+  ;; https://stackoverflow.com/questions/52521587/emacs-error-failed-to-initialize-color-list-unarchiver-when-i-call-it-in-the-t
+  (delete-file "~/Library/Colors/Emacs.clr")
   )
+
 
 (defun dotspacemacs/user-load ()
   "Library to load while dumping.
@@ -553,6 +557,7 @@ before packages are loaded."
   (add-to-list 'auto-mode-alist '("berksfiles/.*\\.production" . ruby-mode))
 
   (add-to-list 'auto-mode-alist '("\\.rsh$" . javascript-mode))
+  (add-to-list 'auto-mode-alist '("\\.scrbl$" . racket-mode))
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
