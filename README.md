@@ -1,5 +1,6 @@
 ## Misc notes and instructions for mac
 
+
 Install stack
 
 ```bash
