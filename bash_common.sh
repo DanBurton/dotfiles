@@ -69,7 +69,7 @@ get-python-version() {
   fi
 }
 
-export PS1="\\n${CYAN}\\w${PURPLE}\\n  [\$($GITBRANCH)\$($GITDIRTY)]\$(get-resolver)\$(get-python-version)\\n${YELLOW}================ ${GRAY}[\\t${DARKGRAY}\$($TIMEZONE)${GRAY}] ${GREEN}\\u${GRAY}@${CYAN}\\h ${DARKGRAY}\\s ${YELLOW}================${DEFAULT}\\n\$ "
+export PS1="\\n${CYAN}\\w${PURPLE}\\n  [\$($GITBRANCH)\$($GITDIRTY)]\$(get-resolver)\$(get-python-version)\\n${YELLOW}============== ${GRAY}[\\t${DARKGRAY}\$($TIMEZONE)${GRAY}] ${GREEN}\\u${GRAY}@${CYAN}\\h ${DARKGRAY}\\s ${YELLOW}==============${DEFAULT}\\n\$ "
 
 # colorized terminal output
 export CLICOLOR=1
